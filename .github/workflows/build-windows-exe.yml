@@ -18,10 +18,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -54,7 +54,7 @@ jobs:
           powershell -NoProfile -ExecutionPolicy Bypass -File .\build_free_online_video_downloader_exe.ps1
 
       - name: Upload EXE artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: FreeOnlineVideoDownloader-${{ github.ref_name }}-windows
           path: .\dist\FreeOnlineVideoDownloader.exe
@@ -71,8 +71,14 @@ jobs:
           $tag = "${{ github.ref_name }}"
           $repo = "${{ github.repository }}"
           $exe = (Resolve-Path '.\dist\FreeOnlineVideoDownloader.exe').Path
-          gh release view $tag --repo $repo *> $null
+          $releaseExists = $false
+          $PSNativeCommandUseErrorActionPreference = $false
+          gh release view $tag --repo $repo 1>$null 2>$null
           if ($LASTEXITCODE -eq 0) {
+              $releaseExists = $true
+          }
+          $PSNativeCommandUseErrorActionPreference = $true
+          if ($releaseExists) {
               gh release upload $tag $exe --repo $repo --clobber
           } else {
               gh release create $tag $exe --repo $repo --title "FreeOnlineVideoDownloader $tag" --notes "Automated Windows build for $tag."
