@@ -160,10 +160,7 @@ python -m pip install --disable-pip-version-check --upgrade --target .\.pyinstal
 
 ### 3. Download and extract FFmpeg
 
-The current build script expects:
-
-- `tools\ffmpeg\ffmpeg-8.1-essentials_build\bin\ffmpeg.exe`
-- `tools\ffmpeg\ffmpeg-8.1-essentials_build\bin\ffprobe.exe`
+The build script scans `tools\ffmpeg\` recursively and bundles the first `ffmpeg.exe` and `ffprobe.exe` it finds there.
 
 Example setup:
 
@@ -188,6 +185,26 @@ Expected output:
 ```text
 dist\FreeOnlineVideoDownloader.exe
 ```
+
+## GitHub Actions Build
+
+This repository includes a GitHub Actions workflow at `.github/workflows/build-windows-exe.yml`.
+
+- Push to `master` or `main`: GitHub builds the Windows `exe` automatically and uploads it as a workflow artifact
+- Run `Build Windows EXE` from the Actions tab: GitHub builds the `exe` on demand
+- Push a version tag such as `v1.0.0`: GitHub builds the `exe`, uploads the workflow artifact, and also publishes `FreeOnlineVideoDownloader.exe` to the matching GitHub Release
+
+Typical release flow:
+
+```powershell
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+After the workflow finishes:
+
+- Download temporary build artifacts from the workflow run page under `Actions`
+- Download public release binaries from the repository `Releases` page when you build from a `v*` tag
 
 ## Clean Previous Build Outputs
 
