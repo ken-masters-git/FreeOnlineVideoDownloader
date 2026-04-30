@@ -17,6 +17,7 @@ env/
 build/
 dist/
 tmp/
+*.spec
 
 # Runtime download outputs
 downloads/
